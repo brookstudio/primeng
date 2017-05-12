@@ -22,7 +22,7 @@ export const DROPDOWN_VALUE_ACCESSOR: any = {
             (click)="onMouseclick($event)" [ngStyle]="style" [class]="styleClass">
             <div class="ui-helper-hidden-accessible" *ngIf="autoWidth">
                 <select [required]="required" tabindex="-1">
-                    <option *ngFor="let option of options" [value]="option.value" [selected]="selectedOption == option">{{option.label}}</option>
+                    <option *ngFor="let option of topLists" [value]="option.value" [selected]="selectedOption == option">{{option.label}}</option>
                 </select>
             </div>
             <div class="ui-helper-hidden-accessible">
@@ -103,6 +103,8 @@ export class Dropdown implements OnInit,AfterViewInit,AfterContentInit,AfterView
     @Input() inputId: string;
     
     @Input() dataKey: string;
+
+    @Input() viewCount: number = 30;
     
     @Output() onChange: EventEmitter<any> = new EventEmitter();
     
@@ -181,7 +183,7 @@ export class Dropdown implements OnInit,AfterViewInit,AfterContentInit,AfterView
     }
             
     ngOnInit() {
-        this.optionsToDisplay = this.options;
+        this.optionsToDisplay = this.topLists;
         this.updateSelectedOption(null);
     }
     
@@ -191,10 +193,15 @@ export class Dropdown implements OnInit,AfterViewInit,AfterContentInit,AfterView
 
     set options(opts:SelectItem[]) {
         this._options = opts;
-        this.optionsToDisplay = this._options;
+        this.optionsToDisplay = this.topLists;
         this.updateSelectedOption(this.value);
         this.optionsChanged = true;
     }
+
+    get topLists(){
+        return (this._options && this._options.length>this.viewCount ? this._options.slice(0, this.viewCount): this._options);
+    }
+
 
     ngAfterViewInit() { 
         this.container = <HTMLDivElement> this.containerViewChild.nativeElement;
@@ -479,7 +486,7 @@ export class Dropdown implements OnInit,AfterViewInit,AfterContentInit,AfterView
             this.optionsToDisplay = [];
             for(let i = 0; i < this.options.length; i++) {
                 let option = this.options[i];
-                if(option.label.toLowerCase().indexOf(val) > -1) {
+                if(this.optionsToDisplay.length<this.viewCount && option.label.toLowerCase().indexOf(val) > -1) {
                     this.optionsToDisplay.push(option);
                 }
             }

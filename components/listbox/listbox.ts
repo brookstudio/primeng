@@ -1,4 +1,4 @@
-import {NgModule,Component,ElementRef,Input,Output,EventEmitter,AfterContentInit,ContentChildren,QueryList,TemplateRef,IterableDiffers,forwardRef} from '@angular/core';
+import { NgModule, Component, ElementRef, Input, Output, EventEmitter, AfterContentInit, ContentChildren, QueryList, TemplateRef, IterableDiffers, forwardRef, OnInit } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {SelectItem} from '../common/api';
 import {SharedModule,PrimeTemplate} from '../common/shared';
@@ -31,7 +31,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                 </div>
             </div>
             <ul class="ui-listbox-list">
-                <li *ngFor="let option of options" [style.display]="isItemVisible(option) ? 'block' : 'none'"
+                <li *ngFor="let option of visibleOptions" [style.display]="isItemVisible(option) ? 'block' : 'none'"
                     [ngClass]="{'ui-listbox-item ui-corner-all':true,'ui-state-highlight':isSelected(option)}"
                     (click)="onOptionClick($event,option)" (dblclick)="onDoubleClick($event,option)" (touchend)="onOptionTouchEnd($event,option)">
                     <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple" (click)="onCheckboxClick($event,option)">
@@ -50,7 +50,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
     `,
     providers: [DomHandler,ObjectUtils,LISTBOX_VALUE_ACCESSOR]
 })
-export class Listbox implements AfterContentInit,ControlValueAccessor {
+export class Listbox implements AfterContentInit,ControlValueAccessor,OnInit {
 
     @Input() options: SelectItem[];
 
@@ -69,6 +69,8 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
     @Input() metaKeySelection: boolean = true;
     
     @Input() dataKey: string;
+
+    @Input() viewCount: number = 60;
 
     @Output() onChange: EventEmitter<any> = new EventEmitter();
 
@@ -95,8 +97,13 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
     public optionTouched: boolean;
 
     constructor(public el: ElementRef, public domHandler: DomHandler, public objectUtils: ObjectUtils) {}
+
+    ngOnInit(){
+        this.visibleOptions = this.topList;
+    }
     
     ngAfterContentInit() {
+        
         this.templates.forEach((item) => {
             switch(item.getType()) {
                 case 'item':
@@ -264,7 +271,7 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
         this.visibleOptions = [];
         for(let i = 0; i < this.options.length; i++) {
             let option = this.options[i];
-            if(option.label.toLowerCase().indexOf(this.filterValue.toLowerCase()) > -1) {
+            if(this.visibleOptions.length < this.viewCount && option.label.toLowerCase().indexOf(this.filterValue.toLowerCase()) > -1) {
                 this.visibleOptions.push(option);
             }
         }
@@ -298,7 +305,7 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
             let items = [];
             for(let i = 0; i < this.options.length; i++) {
                 let option = this.options[i];
-                if(option.label.toLowerCase().includes(this.filterValue.toLowerCase())) {
+                if(items.length < this.viewCount && option.label.toLowerCase().includes(this.filterValue.toLowerCase())) {
                     items.push(option);
                 }
             }
@@ -354,6 +361,9 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
             originalEvent: event,
             value: this.value
         });
+    }
+    get topList(){
+        return (this.options && this.options.length > this.viewCount ? this.options.slice(0, this.viewCount) : this.options);
     }
 }
 
