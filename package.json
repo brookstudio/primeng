@@ -9,6 +9,7 @@
     "webpack-dev-server": "webpack-dev-server --inline",
     "build-prod": "webpack --config config/webpack.prod.js",
     "build-dev": "webpack --config config/webpack.dev.js",
+    "build-aot": "node_modules\\.bin\\ngc -p tsconfig-aot.json",
     "start": "npm run webpack-dev-server",
     "ngc":"node_modules\\.bin\\ngc -p tsconfig-aot.json"
   },
