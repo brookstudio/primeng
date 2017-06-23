@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SelectItem } from '../common/api';
 import { DomHandler } from '../dom/domhandler';
 import { ObjectUtils } from '../utils/ObjectUtils';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule } from '@angular/forms';
 
 export const MULTISELECT_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
@@ -57,8 +57,19 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                                 </div>
                             </div>
                             <label>{{option.label}}</label>
+                            <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" style="cursor:pointer" (click)="deleteOption(option)">
+                                <span class="fa fa-trash"></span>
+                            </a>
                         </li>
                     </ul>
+                </div>
+                <div *ngIf="simpleAdd" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix" style="margin-bottom:0px;margin-top:2px;">
+                    <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
+                        <input type="text" role="textbox" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
+                    </div>
+                    <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd()" style="cursor:pointer" (click)="addNewItem(newItemName)">
+                        <span class="fa fa-plus"></span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -101,6 +112,8 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
 
     @Input() selectedItemsLabel: string = '{0} items selected';
 
+    @Input() simpleAdd: boolean = false;
+
     @ViewChild('container') containerViewChild: ElementRef;
 
     @ViewChild('panel') panelViewChild: ElementRef;
@@ -132,6 +145,8 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
     public filtered: boolean;
 
     public differ: any;
+
+    public newItemName: string = '';
 
     constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer, differs: IterableDiffers, public objectUtils: ObjectUtils) {
         this.differ = differs.find([]).create(null);
@@ -218,7 +233,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
         return this.findSelectionIndex(value) != -1;
     }
 
-    findSelectionIndex(val: any): number  {
+    findSelectionIndex(val: any): number {
         let index = -1;
 
         if (this.value) {
@@ -394,10 +409,36 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
         }
     }
 
+    avaiableToAdd(): boolean {
+        return !(!this.newItemName || this.newItemName.length === 0 ||
+            this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0);
+    }
+
+    addNewItem(newItemName: string) {
+        this.options.push({
+            label: newItemName,
+            value: newItemName,
+            deletable: true
+        });
+        //default to checked
+        this.value = [...this.value || [], newItemName];
+        this.onModelChange(this.value);
+    }
+
+    deleteOption(option) {
+        var valIndex = this.value.findIndex(p => p == option.value);
+        console.log(`valIndex=${valIndex}`);
+        if (valIndex >= 0) {
+            this.value.splice(valIndex,1);
+            this.onModelChange(this.value);
+        }
+        this.options.splice(this.options.findIndex(p => p == option), 1);
+    }
+
 }
 
 @NgModule({
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     exports: [MultiSelect],
     declarations: [MultiSelect]
 })

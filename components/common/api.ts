@@ -47,6 +47,7 @@ export interface Message {
 export interface SelectItem {
     label: string;
     value: any;
+    deletable?: boolean;
 }
 
 export interface TreeNode {
