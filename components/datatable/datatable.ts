@@ -953,8 +953,12 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
         let targetNode = event.target.nodeName;
         if(targetNode == 'TH' || (targetNode == 'SPAN' && !this.domHandler.hasClass(event.target, 'ui-c'))) {
             let columnSortField = column.sortField||column.field;
-            this.sortOrder = (this.sortField === columnSortField)  ? this.sortOrder * -1 : 1;
+            // this.sortOrder = (this.sortField === columnSortField)  ? this.sortOrder * -1 : 1;
+            // this.sortField = columnSortField;
+            this.sortOrder = (this.sortField === columnSortField) ? (this.sortOrder === 1 ? -1 : this.sortOrder + 1) : 1;
             this.sortField = columnSortField;
+            if(this.sortOrder === 0 )
+                this.sortField = null;
             this.sortColumn = column;
             let metaKey = event.metaKey||event.ctrlKey;
 

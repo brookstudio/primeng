@@ -22,5 +22,6 @@ export class MultiSelectDemo {
         this.cars.push({label: 'Renault', value: 'Renault'});
         this.cars.push({label: 'VW', value: 'VW'});
         this.cars.push({label: 'Volvo', value: 'Volvo'});
+        this.cars = [];
     }
 }

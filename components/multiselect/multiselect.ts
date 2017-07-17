@@ -26,7 +26,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                 <span class="fa fa-fw fa-caret-down ui-c"></span>
             </div>
             <div #panel class="ui-multiselect-panel ui-widget ui-widget-content ui-corner-all ui-shadow" [style.display]="overlayVisible ? 'block' : 'none'" (click)="panelClick=true">
-                <div class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix">
+                <div *ngIf="topLists && topLists.length>0" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix">
                     <div class="ui-chkbox ui-widget">
                         <div class="ui-helper-hidden-accessible">
                             <input #cb type="checkbox" readonly="readonly" [checked]="isAllChecked()">
@@ -57,19 +57,23 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                                 </div>
                             </div>
                             <label>{{option.label}}</label>
-                            <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" style="cursor:pointer" (click)="deleteOption(option)">
-                                <span class="fa fa-trash"></span>
+                            <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
+                                <div class="ui-chkbox ui-widget">
+                                    <i _ngcontent-c8="" class="material-icons" style="cursor:pointer">close</i>
+                                </div>
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div *ngIf="simpleAdd" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix" style="margin-bottom:0px;margin-top:2px;">
-                    <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
-                        <input type="text" role="textbox" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
-                    </div>
-                    <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd()" style="cursor:pointer" (click)="addNewItem(newItemName)">
-                        <span class="fa fa-plus"></span>
-                    </a>
+                    <form #form="ngForm">
+                        <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
+                            <input type="text" role="textbox" type="email" email name="newItem" placeholder="Add new here" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
+                        </div>
+                        <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer" (click)="addNewItem(newItemName)">
+                            <span class="fa fa-plus"></span>
+                        </a>
+                    </form>
                 </div>
             </div>
         </div>
@@ -411,7 +415,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
 
     avaiableToAdd(): boolean {
         return !(!this.newItemName || this.newItemName.length === 0 ||
-            this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0);
+             (this.options && this.options.length>0 && this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0));
     }
 
     addNewItem(newItemName: string) {
