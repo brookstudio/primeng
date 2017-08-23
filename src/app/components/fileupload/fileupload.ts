@@ -78,12 +78,6 @@ export class FileUpload implements OnInit, AfterContentInit {
 
     @Input() maxFileSize: number;
 
-    @Input() allowedUploadCount: number = 20;
-
-    @Input() allowedSameFileName: boolean = true;
-
-    @Input() uploadedFiles: any[] = [];
-
     @Input() invalidFileSizeMessageSummary: string = '{0}: Invalid file size, ';
 
     @Input() invalidFileSizeMessageDetail: string = 'maximum upload size is {0}.';
@@ -160,7 +154,7 @@ export class FileUpload implements OnInit, AfterContentInit {
 
     focus: boolean;
 
-    constructor(private sanitizer: DomSanitizer) { }
+    constructor(public domHandler: DomHandler, private sanitizer: DomSanitizer, public zone: NgZone) { }
 
     ngOnInit() {
         this.files = [];

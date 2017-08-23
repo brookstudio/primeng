@@ -165,7 +165,6 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
 
     public optionsDiffer: any;
 
-    public newItemName: string = '';
     public itemTemplate: TemplateRef<any>;
 
     public newItemName: string = '';
