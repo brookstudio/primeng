@@ -1,7 +1,9 @@
-import {NgModule,Component,ElementRef,AfterViewInit,DoCheck,OnDestroy,Input,Output,ViewChild,EventEmitter,IterableDiffers} from '@angular/core';
+import {NgModule,Component,ElementRef,AfterViewInit,DoCheck,OnDestroy,Input,Output,ViewChild,EventEmitter,IterableDiffers,Optional} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Message} from '../common/message';
 import {DomHandler} from '../dom/domhandler';
+import {MessageService} from '../common/messageservice';
+import {Subscription}   from 'rxjs/Subscription';
 
 @Component({
     selector: 'p-growl',
@@ -57,14 +59,29 @@ export class Growl implements AfterViewInit,DoCheck,OnDestroy {
     preventRerender: boolean;
     
     differ: any;
+    
+    subscription: Subscription;
         
-    constructor(public el: ElementRef, public domHandler: DomHandler, public differs: IterableDiffers) {
+    constructor(public el: ElementRef, public domHandler: DomHandler, public differs: IterableDiffers, @Optional() public messageService: MessageService) {
         this.zIndex = DomHandler.zindex;
         this.differ = differs.find([]).create(null);
+        
+        if(messageService) {
+            this.subscription = messageService.messageObserver.subscribe(messages => {
+                if(messages instanceof Array)
+                    this.value = messages;
+                else
+                    this.value = [messages];
+            });
+        }
     }
 
     ngAfterViewInit() {
         this.container = <HTMLDivElement> this.containerViewChild.nativeElement;
+        
+        if(!this.sticky) {
+            this.initTimeout();
+        }
     }
     
     @Input() get value(): Message[] {
@@ -97,13 +114,17 @@ export class Growl implements AfterViewInit,DoCheck,OnDestroy {
         this.domHandler.fadeIn(this.container, 250);
         
         if(!this.sticky) {
-            if(this.timeout) {
-                clearTimeout(this.timeout);
-            }
-            this.timeout = setTimeout(() => {
-                this.removeAll();
-            }, this.life);
+            this.initTimeout();
         }
+    }
+    
+    initTimeout() {
+        if(this.timeout) {
+            clearTimeout(this.timeout);
+        }
+        this.timeout = setTimeout(() => {
+            this.removeAll();
+        }, this.life);
     }
         
     remove(index: number, msgel: any) {        
@@ -147,6 +168,10 @@ export class Growl implements AfterViewInit,DoCheck,OnDestroy {
     ngOnDestroy() {
         if(!this.sticky) {
             clearTimeout(this.timeout);
+        }
+        
+        if(this.subscription) {
+            this.subscription.unsubscribe();
         }
     }
 

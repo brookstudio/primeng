@@ -15,7 +15,7 @@
     <p>Selected Car: {{selectedCar||'none'}}</p>
     
     <h3>Content with Filters</h3>
-    <p-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'150px'}" filter="filter">
+    <p-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'150px'}" filter="filter" lazy="false">
         <ng-template let-car pTemplate="item">
             <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
                 <img src="assets/showcase/images/demo/car/{{car.label}}.png" style="width:24px;position:absolute;top:1px;left:5px"/>
@@ -248,6 +248,18 @@ export class MyModel &#123;
                             <td>string</td>
                             <td>null</td>
                             <td>A property to uniquely identify a value in options.</td>
+                        </tr>
+                        <tr>
+                            <td>lazy</td>
+                            <td>boolean</td>
+                            <td>true</td>
+                            <td>When enabled, creates the dom for options when overlay panel gets visible.</td>
+                        </tr>
+                        <tr>
+                            <td>autofocus</td>
+                            <td>boolean</td>
+                            <td>false</td>
+                            <td>When present, it specifies that the component should automatically get focus on load.</td>
                         </tr>
                     </tbody>
                 </table>

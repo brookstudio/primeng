@@ -47,6 +47,11 @@ export class Tooltip implements OnDestroy {
     @HostListener('mouseenter', ['$event']) 
     onMouseEnter(e: Event) {
         if(this.tooltipEvent === 'hover') {
+            if(this.hideTimeout) {
+                clearTimeout(this.hideTimeout);
+                this.destroy();
+            }
+
             this.activate();
         }
     }
@@ -164,7 +169,7 @@ export class Tooltip implements OnDestroy {
     
     updateText () {
         if(this.escape) {
-            this.tooltipText.innerHTML = null;
+            this.tooltipText.innerHTML = '';
             this.tooltipText.appendChild(document.createTextNode(this._text));
         }
 		else {

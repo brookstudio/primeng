@@ -17,7 +17,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
     template: `
         <div [ngClass]="{'ui-listbox ui-inputtext ui-widget ui-widget-content ui-corner-all':true,'ui-state-disabled':disabled}" [ngStyle]="style" [class]="styleClass">
             <div class="ui-widget-header ui-corner-all ui-listbox-header ui-helper-clearfix" *ngIf="(checkbox && multiple) || filter" [ngClass]="{'ui-listbox-header-w-checkbox': checkbox}">
-                <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple">
+                <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple && showToggleAll">
                     <div class="ui-helper-hidden-accessible">
                         <input #cb type="checkbox" readonly="readonly" [checked]="allChecked">
                     </div>
@@ -31,7 +31,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                 </div>
             </div>
             <ul class="ui-listbox-list">
-                <li *ngFor="let option of visibleOptions" [style.display]="isItemVisible(option) ? 'block' : 'none'"
+                <li *ngFor="let option of options | slice:0:limit; let i = index;" [style.display]="isItemVisible(option) ? 'block' : 'none'"
                     [ngClass]="{'ui-listbox-item ui-corner-all':true,'ui-state-highlight':isSelected(option)}"
                     (click)="onOptionClick($event,option)" (dblclick)="onDoubleClick($event,option)" (touchend)="onOptionTouchEnd($event,option)">
                     <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple" (click)="onCheckboxClick($event,option)">
@@ -69,6 +69,10 @@ export class Listbox implements AfterContentInit,ControlValueAccessor,OnInit {
     @Input() metaKeySelection: boolean = true;
     
     @Input() dataKey: string;
+    
+    @Input() showToggleAll: boolean = true;
+
+    @Input() limit: number = 100;
 
     @Input() viewCount: number = 60;
 
