@@ -1,10 +1,12 @@
-import {NgModule,Component,ElementRef,OnInit,AfterViewInit,AfterContentInit,AfterViewChecked,DoCheck,OnDestroy,Input,Output,Renderer2,EventEmitter,IterableDiffers,
-            forwardRef,ViewChild,ChangeDetectorRef,TemplateRef,ContentChildren,QueryList} from '@angular/core';
+import {
+    NgModule, Component, ElementRef, OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, DoCheck, OnDestroy, Input, Output, Renderer2, EventEmitter, IterableDiffers,
+    forwardRef, ViewChild, ChangeDetectorRef, TemplateRef, ContentChildren, QueryList
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectItem } from '../common/selectitem';
 import { DomHandler } from '../dom/domhandler';
 import { ObjectUtils } from '../utils/objectutils';
-import {SharedModule,PrimeTemplate} from '../common/shared';
+import { SharedModule, PrimeTemplate } from '../common/shared';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule } from '@angular/forms';
 
 export const MULTISELECT_VALUE_ACCESSOR: any = {
@@ -29,61 +31,60 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
             </div>
             <div #panel [ngClass]="['ui-multiselect-panel ui-widget ui-widget-content ui-corner-all ui-shadow', panelStyleClass||'']" [ngStyle]="panelStyle"
                 [style.display]="overlayVisible ? 'block' : 'none'" (click)="panelClick=true">
-                    <div class="ui-chkbox ui-widget">
-                        <div class="ui-helper-hidden-accessible">
-                            <input #cb type="checkbox" readonly="readonly" [checked]="isAllChecked()">
-                        </div>
-                        <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-active':isAllChecked()}" (click)="toggleAll($event,cb)">
-                            <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isAllChecked()}"></span>
-                        </div>
-                    </div>
-                    <div class="ui-multiselect-filter-container" *ngIf="filter">
-                        <input type="text" role="textbox" (input)="onFilter($event)"
-                                    class="ui-inputtext ui-widget ui-state-default ui-corner-all">
-                        <span class="fa fa-fw fa-search"></span>
-                    </div>
-                    <a class="ui-multiselect-close ui-corner-all" href="#" (click)="close($event)">
-                        <span class="fa fa-close"></span>
-                    </a>
-                </div>
-                <div class="ui-multiselect-items-wrapper">
-                    <ul class="ui-multiselect-items ui-multiselect-list ui-widget-content ui-widget ui-corner-all ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
-                        <li *ngFor="let option of options | slice:0 :limit; let index = i" class="ui-multiselect-item ui-corner-all" (click)="onItemClick($event,option.value)" 
-                            [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'ui-state-highlight':isSelected(option.value)}">
-                            <div class="ui-chkbox ui-widget">
-                                <div class="ui-helper-hidden-accessible">
-                                    <input type="checkbox" readonly="readonly" [checked]="isSelected(option.value)">
-                                </div>
-                                <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-active':isSelected(option.value)}">
-                                    <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isSelected(option.value)}"></span>
-                                </div>
+                    <div class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix">
+                        <div class="ui-chkbox ui-widget">
+                            <div class="ui-helper-hidden-accessible">
+                                <input #cb type="checkbox" readonly="readonly" [checked]="isAllChecked()">
                             </div>
-                            <label *ngIf="!itemTemplate">{{option.label}}</label>
-                            <ng-template [pTemplateWrapper]="itemTemplate" [item]="option" [index]="i" *ngIf="itemTemplate"></ng-template>
-                            <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
-                                <div class="ui-chkbox ui-widget">
-                                    <i _ngcontent-c8="" class="material-icons" style="cursor:pointer">close</i>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div *ngIf="simpleAdd" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix" style="margin-bottom:0px;margin-top:2px;">
-                    <form #form="ngForm">
-                        <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
-                            <input type="text" role="textbox" type="email" email name="newItem" placeholder="Add new here" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
+                            <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-active':isAllChecked()}" (click)="toggleAll($event,cb)">
+                                <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isAllChecked()}"></span>
+                            </div>
                         </div>
-                        <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer;top:0.5em;" (click)="addNewItem(newItemName)">
-                            <span class="fa fa-plus"></span>
+                        <div class="ui-multiselect-filter-container" *ngIf="filter">
+                            <input type="text" role="textbox" (input)="onFilter($event)"
+                                        class="ui-inputtext ui-widget ui-state-default ui-corner-all">
+                            <span class="fa fa-fw fa-search"></span>
+                        </div>
+                        <a class="ui-multiselect-close ui-corner-all" href="#" (click)="close($event)">
+                            <span class="fa fa-close"></span>
                         </a>
-                    </form>
-                </div>
+                    </div>
+                    <div class="ui-multiselect-items-wrapper">
+                        <ul class="ui-multiselect-items ui-multiselect-list ui-widget-content ui-widget ui-corner-all ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
+                            <li *ngFor="let option of options | slice:0 :limit; let index = i" class="ui-multiselect-item ui-corner-all" (click)="onItemClick($event,option.value)" 
+                                [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'ui-state-highlight':isSelected(option.value)}">
+                                <div class="ui-chkbox ui-widget">
+                                    <div class="ui-helper-hidden-accessible">
+                                        <input type="checkbox" readonly="readonly" [checked]="isSelected(option.value)">
+                                    </div>
+                                    <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-active':isSelected(option.value)}">
+                                        <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isSelected(option.value)}"></span>
+                                    </div>
+                                </div>
+                                <label *ngIf="!itemTemplate">{{option.label}}</label>
+                                <ng-template [pTemplateWrapper]="itemTemplate" [item]="option" [index]="i" *ngIf="itemTemplate"></ng-template>
+                                <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
+                                    <span class="fa fa-close"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div *ngIf="simpleAdd" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix" style="margin-bottom:0px;margin-top:2px;">
+                        <form #form="ngForm">
+                            <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
+                                <input type="text" role="textbox" type="email" email name="newItem" placeholder="Add new here" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
+                            </div>
+                            <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer;top:0.5em;" (click)="addNewItem(newItemName)">
+                                <span class="fa fa-plus"></span>
+                            </a>
+                        </form>
+                    </div>
             </div>
         </div>
     `,
     providers: [DomHandler, ObjectUtils, MULTISELECT_VALUE_ACCESSOR]
 })
-export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterViewChecked,DoCheck,OnDestroy,ControlValueAccessor {
+export class MultiSelect implements OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, DoCheck, OnDestroy, ControlValueAccessor {
 
     @Input() options: SelectItem[];
 
@@ -98,7 +99,7 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     @Input() style: any;
 
     @Input() styleClass: string;
-    
+
     @Input() panelStyle: any;
 
     @Input() panelStyleClass: string;
@@ -128,13 +129,13 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     @Input() limit: number = 100;
 
     @Input() simpleAdd: boolean = false;
-        
+
     @ViewChild('container') containerViewChild: ElementRef;
 
     @ViewChild('panel') panelViewChild: ElementRef;
 
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
-    
+
     public value: any[];
 
     public onModelChange: Function = () => { };
@@ -168,7 +169,7 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     public itemTemplate: TemplateRef<any>;
 
     public newItemName: string = '';
-    
+
     constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2, differs: IterableDiffers, public objectUtils: ObjectUtils, private cd: ChangeDetectorRef) {
         this.valueDiffer = differs.find([]).create(null);
         this.optionsDiffer = differs.find([]).create(null);
@@ -196,18 +197,18 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
 
     ngAfterContentInit() {
         this.templates.forEach((item) => {
-            switch(item.getType()) {
+            switch (item.getType()) {
                 case 'item':
                     this.itemTemplate = item.template;
-                break;
-                
+                    break;
+
                 default:
                     this.itemTemplate = item.template;
-                break;
+                    break;
             }
         });
     }
-    
+
     ngAfterViewInit() {
         this.container = <HTMLDivElement>this.containerViewChild.nativeElement;
         this.panel = <HTMLDivElement>this.panelViewChild.nativeElement;
@@ -505,8 +506,8 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
 }
 
 @NgModule({
-    imports: [CommonModule, FormsModule],
-    exports: [MultiSelect,SharedModule],
+    imports: [CommonModule, SharedModule, FormsModule],
+    exports: [MultiSelect, SharedModule],
     declarations: [MultiSelect]
 })
 export class MultiSelectModule { }
