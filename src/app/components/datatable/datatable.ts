@@ -497,6 +497,8 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
 
     @Output() onRowSelect: EventEmitter<any> = new EventEmitter();
 
+    @Output() onRowSelectAll: EventEmitter<any> = new EventEmitter()
+
     @Output() onRowUnselect: EventEmitter<any> = new EventEmitter();
 
     @Output() onRowDblclick: EventEmitter<any> = new EventEmitter();
@@ -911,6 +913,7 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
         
         if(this.scrollable) {
             this.scrollableColumns = [];
+            this.frozenColumns = []; //yin huarong , fixed the frozen columns duplicated after initColumns
             this.cols.forEach((col) => {
                 if(col.frozen) {
                     this.frozenColumns = this.frozenColumns||[];
@@ -1065,8 +1068,12 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
             }
             
             let columnSortField = column.sortField||column.field;
-            this.sortOrder = (this.sortField === columnSortField)  ? this.sortOrder * -1 : this.defaultSortOrder;
+            // this.sortOrder = (this.sortField === columnSortField)  ? this.sortOrder * -1 : this.defaultSortOrder;
+            // this.sortField = columnSortField;
+            this.sortOrder = (this.sortField === columnSortField) ? (this.sortOrder === 1 ? -1 : this.sortOrder + 1) : 1;
             this.sortField = columnSortField;
+            if(this.sortOrder === 0 )
+                this.sortField = null;
             this.sortColumn = column;
             let metaKey = event.metaKey||event.ctrlKey;
 
@@ -1492,6 +1499,9 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
     }
     
     toggleRowsWithCheckbox(event) {
+        let originSelected = [];
+        if(this.selection)
+            originSelected = [...this.selection];
         if(event.checked)
             this.selection = this.headerCheckboxToggleAllPages ? this.value.slice() : this.dataToRender.slice();
         else
@@ -1500,6 +1510,7 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
         this.selectionChange.emit(this.selection);
         
         this.onHeaderCheckboxToggle.emit({originalEvent: event, checked: event.checked});
+        this.onRowSelectAll.emit({ originalEvent: event,originSelected: originSelected, currentTabledata: this.dataToRender.slice(0), type: 'checkbox',isAllChecked: event.checked });
     }
     
     onRowRightClick(event, rowData) {

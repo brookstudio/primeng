@@ -31,7 +31,7 @@ export const LISTBOX_VALUE_ACCESSOR: any = {
                 </div>
             </div>
             <ul class="ui-listbox-list">
-                <li *ngFor="let option of options; let i = index;" [style.display]="isItemVisible(option) ? 'block' : 'none'"
+                <li *ngFor="let option of options | slice:0:limit; let i = index;" [style.display]="isItemVisible(option) ? 'block' : 'none'"
                     [ngClass]="{'ui-listbox-item ui-corner-all':true,'ui-state-highlight':isSelected(option)}"
                     (click)="onOptionClick($event,option)" (dblclick)="onDoubleClick($event,option)" (touchend)="onOptionTouchEnd($event,option)">
                     <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple" (click)="onCheckboxClick($event,option)">
@@ -71,6 +71,8 @@ export class Listbox implements AfterContentInit,ControlValueAccessor {
     @Input() dataKey: string;
     
     @Input() showToggleAll: boolean = true;
+
+    @Input() limit: number = 100;
 
     @Output() onChange: EventEmitter<any> = new EventEmitter();
 

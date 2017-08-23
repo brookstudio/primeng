@@ -5,7 +5,7 @@ import {SelectItem} from '../common/selectitem';
 import {DomHandler} from '../dom/domhandler';
 import {ObjectUtils} from '../utils/objectutils';
 import {SharedModule,PrimeTemplate} from '../common/shared';
-import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule } from '@angular/forms';
 
 export const MULTISELECT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -49,7 +49,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                 </div>
                 <div class="ui-multiselect-items-wrapper">
                     <ul class="ui-multiselect-items ui-multiselect-list ui-widget-content ui-widget ui-corner-all ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
-                        <li *ngFor="let option of options; let index = i" class="ui-multiselect-item ui-corner-all" (click)="onItemClick($event,option.value)" 
+                        <li *ngFor="let option of options | slice:0 :limit; let index = i" class="ui-multiselect-item ui-corner-all" (click)="onItemClick($event,option.value)" 
                             [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'ui-state-highlight':isSelected(option.value)}">
                             <div class="ui-chkbox ui-widget">
                                 <div class="ui-helper-hidden-accessible">
@@ -63,6 +63,16 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                             <ng-template [pTemplateWrapper]="itemTemplate" [item]="option" [index]="i" *ngIf="itemTemplate"></ng-template>
                         </li>
                     </ul>
+                </div>
+                <div *ngIf="simpleAdd" class="ui-widget-header ui-corner-all ui-multiselect-header ui-helper-clearfix" style="margin-bottom:0px;margin-top:2px;">
+                    <form #form="ngForm">
+                        <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
+                            <input type="text" role="textbox" type="email" email name="newItem" placeholder="Add new here" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
+                        </div>
+                        <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer;top:0.5em;" (click)="addNewItem(newItemName)">
+                            <span class="fa fa-plus"></span>
+                        </a>
+                    </form>
                 </div>
             </div>
         </div>
@@ -108,6 +118,10 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     @Input() maxSelectedLabels: number = 3;
     
     @Input() selectedItemsLabel: string = '{0} items selected';
+
+    @Input() limit: number = 100;
+
+    @Input() simpleAdd: boolean = false;
         
     @ViewChild('container') containerViewChild: ElementRef;
     
@@ -146,6 +160,8 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     public optionsDiffer: any;
     
     public itemTemplate: TemplateRef<any>;
+
+    public newItemName: string = '';
     
     constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2, differs: IterableDiffers, public objectUtils: ObjectUtils, private cd: ChangeDetectorRef) {
         this.valueDiffer = differs.find([]).create(null);
@@ -440,10 +456,36 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
         }
     }
 
+    avaiableToAdd(): boolean {
+        return !(!this.newItemName || this.newItemName.length === 0 ||
+             (this.options && this.options.length>0 && this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0));
+    }
+
+    addNewItem(newItemName: string) {
+        this.options.push({
+            label: newItemName,
+            value: newItemName,
+            deletable: true
+        });
+        //default to checked
+        this.value = [...this.value || [], newItemName];
+        this.onModelChange(this.value);
+    }
+
+    deleteOption(option) {
+        var valIndex = this.value.findIndex(p => p == option.value);
+        console.log(`valIndex=${valIndex}`);
+        if (valIndex >= 0) {
+            this.value.splice(valIndex,1);
+            this.onModelChange(this.value);
+        }
+        this.options.splice(this.options.findIndex(p => p == option), 1);
+    }
+
 }
 
 @NgModule({
-    imports: [CommonModule,SharedModule],
+    imports: [CommonModule,SharedModule, FormsModule],
     exports: [MultiSelect,SharedModule],
     declarations: [MultiSelect]
 })
