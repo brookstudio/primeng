@@ -1,8 +1,8 @@
-import {NgModule,Component,ElementRef,OnInit,AfterViewInit,AfterViewChecked,DoCheck,OnDestroy,Input,Output,Renderer2,EventEmitter,IterableDiffers,forwardRef,ViewChild,ChangeDetectorRef} from '@angular/core';
+import { NgModule, Component, ElementRef, OnInit, AfterViewInit, AfterViewChecked, DoCheck, OnDestroy, Input, Output, Renderer2, EventEmitter, IterableDiffers, forwardRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {SelectItem} from '../common/selectitem';
+import { SelectItem } from '../common/selectitem';
 import { DomHandler } from '../dom/domhandler';
-import {ObjectUtils} from '../utils/objectutils';
+import { ObjectUtils } from '../utils/objectutils';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule } from '@angular/forms';
 
 export const MULTISELECT_VALUE_ACCESSOR: any = {
@@ -101,7 +101,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
     @Input() disabled: boolean;
 
     @Input() filter: boolean = true;
-    
+
     @Input() overlayVisible: boolean;
 
     @Input() tabindex: number;
@@ -153,7 +153,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
     public valueDiffer: any;
 
     public optionsDiffer: any;
-    
+
     public newItemName: string = '';
 
     constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2, differs: IterableDiffers, public objectUtils: ObjectUtils, private cd: ChangeDetectorRef) {
@@ -169,7 +169,15 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
     ngOnInit() {
         this.updateLabel();
 
+        this.documentClickListener = this.renderer.listen('document', 'click', () => {
             if (!this.selfClick && !this.panelClick && this.overlayVisible) {
+                this.hide();
+            }
+
+            this.selfClick = false;
+            this.panelClick = false;
+            this.cd.markForCheck();
+        });
 
     }
 
@@ -191,7 +199,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
 
     ngAfterViewChecked() {
         if (this.filtered) {
-            if(this.appendTo)
+            if (this.appendTo)
                 this.domHandler.absolutePosition(this.panel, this.container);
             else
                 this.domHandler.relativePosition(this.panel, this.container);
@@ -204,7 +212,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
         let valueChanges = this.valueDiffer.diff(this.value);
         let optionChanges = this.optionsDiffer.diff(this.options);
 
-        if(valueChanges||optionChanges) {
+        if (valueChanges || optionChanges) {
             this.updateLabel();
         }
     }
@@ -335,7 +343,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
     }
 
     updateLabel() {
-        if(this.value && this.options && this.value.length && this.displaySelectedLabel) {
+        if (this.value && this.options && this.value.length && this.displaySelectedLabel) {
             let label = '';
             for (let i = 0; i < this.value.length; i++) {
                 if (i != 0) {
@@ -362,7 +370,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
         let label = null;
         for (let i = 0; i < this.options.length; i++) {
             let option = this.options[i];
-            if(val == null && option.value == null || this.objectUtils.equals(val, option.value, this.dataKey)) {
+            if (val == null && option.value == null || this.objectUtils.equals(val, option.value, this.dataKey)) {
                 label = option.label;
                 break;
             }
@@ -410,26 +418,26 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
             return this.options;
         }
     }
-    
+
     bindDocumentClickListener() {
-        if(!this.documentClickListener) {
+        if (!this.documentClickListener) {
             this.documentClickListener = this.renderer.listen('document', 'click', () => {
-                if(!this.selfClick && !this.panelClick && this.overlayVisible) {
+                if (!this.selfClick && !this.panelClick && this.overlayVisible) {
                     this.hide();
                 }
-                
+
                 this.selfClick = false;
                 this.panelClick = false;
                 this.cd.markForCheck();
             });
-        }        
+        }
     }
-    
+
     unbindDocumentClickListener() {
         if (this.documentClickListener) {
             this.documentClickListener();
             this.documentClickListener = null;
-        }        
+        }
     }
 
     ngOnDestroy() {
@@ -442,7 +450,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
 
     avaiableToAdd(): boolean {
         return !(!this.newItemName || this.newItemName.length === 0 ||
-             (this.options && this.options.length>0 && this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0));
+            (this.options && this.options.length > 0 && this.options.filter(p => p.label.toLowerCase() == this.newItemName.toLowerCase().trim()).length > 0));
     }
 
     addNewItem(newItemName: string) {
@@ -460,7 +468,7 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterViewChecked, DoC
         var valIndex = this.value.findIndex(p => p == option.value);
         console.log(`valIndex=${valIndex}`);
         if (valIndex >= 0) {
-            this.value.splice(valIndex,1);
+            this.value.splice(valIndex, 1);
             this.onModelChange(this.value);
         }
         this.options.splice(this.options.findIndex(p => p == option), 1);

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Car } from '../domain/car';
+import {Observable} from "rxjs/Rx";
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
