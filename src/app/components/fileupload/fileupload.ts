@@ -301,37 +301,36 @@ export class FileUpload implements OnInit, AfterContentInit {
             this.uploadHandler.emit({
                 files: this.files
             });
-        }
-        else {
+        } else {
             this.msgs = [];
             let xhr = new XMLHttpRequest(),
                 formData = new FormData();
 
-        this.onBeforeUpload.emit({
+            this.onBeforeUpload.emit({
                 'xhr': xhr,
-            	'formData': formData
+                'formData': formData
             });
 
-        for (let i = 0; i < this.files.length; i++) {
+            for (let i = 0; i < this.files.length; i++) {
                 formData.append(this.name, this.files[i], this.files[i].name);
             }
 
             xhr.upload.addEventListener('progress', (e: ProgressEvent) => {
-            if (e.lengthComputable) {
-                this.progress = Math.round((e.loaded * 100) / e.total);
+                if (e.lengthComputable) {
+                    this.progress = Math.round((e.loaded * 100) / e.total);
                 }
 
                 this.onProgress.emit({ originalEvent: e, progress: this.progress });
             }, false);
 
             xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
+                if (xhr.readyState == 4) {
                     this.progress = 0;
 
-                if (xhr.status >= 200 && xhr.status < 300)
-                    this.onUpload.emit({ xhr: xhr, files: this.files });
+                    if (xhr.status >= 200 && xhr.status < 300)
+                        this.onUpload.emit({ xhr: xhr, files: this.files });
                     else
-                    this.onError.emit({ xhr: xhr, files: this.files });
+                        this.onError.emit({ xhr: xhr, files: this.files });
 
                     this.clear();
                 }
@@ -339,10 +338,10 @@ export class FileUpload implements OnInit, AfterContentInit {
 
             xhr.open(this.method, this.url, true);
 
-        this.onBeforeSend.emit({
-            'xhr': xhr,
-            'formData': formData
-        });
+            this.onBeforeSend.emit({
+                'xhr': xhr,
+                'formData': formData
+            });
 
             xhr.withCredentials = this.withCredentials;
 
