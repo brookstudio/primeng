@@ -63,7 +63,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                                 </div>
                                 <label *ngIf="!itemTemplate">{{option.label}}</label>
                                 <ng-template [pTemplateWrapper]="itemTemplate" [item]="option" [index]="i" *ngIf="itemTemplate"></ng-template>
-                                <a style="float:right;" class="ui-multiselect-close ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
+                                <a style="float:right;" class="ui-multiselect-delete ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
                                     <span class="fa fa-close"></span>
                                 </a>
                             </li>
@@ -74,7 +74,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
                             <div class="ui-multiselect-filter-container" style="width: calc(100% - 20px)">
                                 <input type="text" role="textbox" type="email" email name="newItem" placeholder="Add new here" [(ngModel)]="newItemName" class="ui-inputtext ui-widget ui-state-default ui-corner-all" style="padding-left:0.125em;">
                             </div>
-                            <a class="ui-multiselect-close ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer;top:0.5em;" (click)="addNewItem(newItemName)">
+                            <a class="ui-multiselect-plus ui-corner-all" *ngIf="avaiableToAdd() && form.form.valid" style="cursor:pointer;" (click)="addNewItem(newItemName)">
                                 <span class="fa fa-plus"></span>
                             </a>
                         </form>

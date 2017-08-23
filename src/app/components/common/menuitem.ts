@@ -18,4 +18,5 @@ export interface MenuItem {
     style?:any;
     styleClass?:string;
     title?: string;
+    eventEmitter?: EventEmitter<any>;
 }
