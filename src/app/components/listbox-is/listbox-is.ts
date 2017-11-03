@@ -38,7 +38,7 @@ export const LISTBOX_IS_VALUE_ACCESSOR: any = {
       </div>
       <div class="ui-listbox-list-wrapper">
         <ul class="ui-listbox-list" [ngStyle]="listStyle">
-          <li *ngFor="let option of options; let i = index;" [style.display]="isItemVisible(option) ? 'block' : 'none'"
+          <li *ngFor="let option of visibleOptions; let i = index;"
               [ngClass]="{'ui-listbox-item ui-corner-all':true,'ui-state-highlight':isSelected(option)}"
               (click)="onOptionClick($event,option)" (dblclick)="onDoubleClick($event,option)" (touchend)="onOptionTouchEnd($event,option)">
             <div class="ui-chkbox ui-widget" *ngIf="checkbox && multiple" (click)="onCheckboxClick($event,option)">
@@ -396,6 +396,23 @@ export class ListboxIS implements AfterContentInit,ControlValueAccessor {
   onInputBlur(event) {
     this.focus = false;
   }
+
+  get visibleOptions(){
+    if(this.filterValue && this.filterValue.trim().length) {
+      let items = [];
+      return this.options.filter(option => option.label.toLowerCase().includes(this.filterValue.toLowerCase())).slice(0, this.limit);
+      // for(let i = 0; i < this.options.length; i++) {
+      //     let option = this.options[i];
+      //     if(items.length < this.viewCount && option.label.toLowerCase().includes(this.filterValue.toLowerCase())) {
+      //         items.push(option);
+      //     }
+      // }
+      // return items;
+  }
+  else {
+      return this.options.slice(0, this.limit);
+  }
+}
 }
 
 @NgModule({
