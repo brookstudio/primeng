@@ -331,7 +331,7 @@
 }
 
 .ui-picklist {
-    .ui-picklist-item:not(.ui-state-highlight):hover {
+    .ui-picklist-item:not(.ui-state-disabled):not(.ui-state-highlight):hover {
         @include hover-element();
     }
 
@@ -472,22 +472,20 @@
     }
 }
 
-.ui-menu {
-    .ui-menuitem {
-        .ui-menuitem-link {
-            color: $contentTextColor;
+.ui-menuitem {
+    .ui-menuitem-link {
+        color: $contentTextColor;
 
-            &:hover {
-                @include hover-element();
-                border-color: transparent;
-            }
+        &:hover {
+            @include hover-element();
+            border-color: transparent;
         }
+    }
 
-        &.ui-menuitem-active {
-            > .ui-menuitem-link {
-                @include hover-element();
-                border-color: transparent;
-            }
+    &.ui-menuitem-active {
+        > .ui-menuitem-link {
+            @include hover-element();
+            border-color: transparent;
         }
     }
 }
