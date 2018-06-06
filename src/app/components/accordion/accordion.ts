@@ -4,7 +4,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { SharedModule, Header } from '../common/shared';
 import { BlockableUI } from '../common/blockableui';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 let idx: number = 0;
 
@@ -135,9 +135,9 @@ export class Accordion implements BlockableUI, AfterContentInit, OnDestroy {
     
     @Input() styleClass: string;
 
-    @Input() expandIcon: string = 'fa fa-fw fa-caret-right';
+    @Input() expandIcon: string = 'pi pi-fw pi-caret-right';
 
-    @Input() collapseIcon: string = 'fa fa-fw fa-caret-down';
+    @Input() collapseIcon: string = 'pi pi-fw pi-caret-down';
     
     @Input() lazy: boolean;
 
