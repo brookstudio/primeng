@@ -60,7 +60,7 @@ export const MULTISELECT_IS_VALUE_ACCESSOR: any = {
                                 </div>
                             </div>
                             <label *ngIf="!itemTemplate">{{option.label}}</label>
-                            <ng-template [pTemplateWrapper]="itemTemplate" [item]="option" [index]="i" *ngIf="itemTemplate"></ng-template>
+                            <ng-container *ngTemplateOutlet="itemTemplate; context: {$implicit: option, index: i}"></ng-container>
                             <a style="float:right;" class="ui-multiselect-delete ui-corner-all" *ngIf="option.deletable" (click)="deleteOption(option)">
                                 <span class="fa fa-close"></span>
                             </a>
