@@ -48,8 +48,10 @@ export const DROPDOWN_IS_VALUE_ACCESSOR: any = {
                   <input #in [attr.id]="inputId" type="text" [attr.aria-label]="selectedOption ? selectedOption.label : ' '" readonly (focus)="onInputFocus($event)" role="listbox"
                       (blur)="onInputBlur($event)" (keydown)="onKeydown($event)" [disabled]="disabled" [attr.tabindex]="tabindex" [attr.autofocus]="autofocus">
               </div>
-              <label [ngClass]="{'ui-dropdown-label ui-inputtext ui-corner-all':true,'ui-dropdown-label-empty':(label == null || label.length === 0)}" *ngIf="!editable && (label != null) && !selectItemTemplate">{{label||'empty'}}</label>
-              <label [ngClass]="{'ui-dropdown-label ui-inputtext ui-corner-all':true,'ui-dropdown-label-empty':(label == null || label.length === 0)}" *ngIf="!editable && (label != null)"><ng-template [pTemplateWrapper]="selectItemTemplate" [item]="{label:label,value:value}" *ngIf="selectItemTemplate"></ng-template></label>
+              <label [ngClass]="{'ui-dropdown-label ui-inputtext ui-corner-all':true,'ui-dropdown-label-empty':(label == null || label.length === 0)}" *ngIf="!editable && (label != null)">
+                <ng-container *ngIf="!selectedItemTemplate">{{label||'empty'}}</ng-container>
+                <ng-container *ngTemplateOutlet="selectedItemTemplate; context: {$implicit: selectedOption}"></ng-container>
+              </label>
               <label [ngClass]="{'ui-dropdown-label ui-inputtext ui-corner-all ui-placeholder':true,'ui-dropdown-label-empty': (placeholder == null || placeholder.length === 0)}" *ngIf="!editable && (label == null)">{{placeholder||'empty'}}</label>
               <input #editableInput type="text" [attr.aria-label]="selectedOption ? selectedOption.label : ' '" class="ui-dropdown-label ui-inputtext ui-corner-all" *ngIf="editable" [disabled]="disabled" [attr.placeholder]="placeholder"
                           (click)="onEditableInputClick($event)" (input)="onEditableInputChange($event)" (focus)="onEditableInputFocus($event)" (blur)="onInputBlur($event)">
@@ -166,7 +168,7 @@ export class DropdownIS implements OnInit, AfterViewInit, AfterContentInit, Afte
 
   public itemTemplate: TemplateRef<any>;
 
-  public selectItemTemplate: TemplateRef<any>;
+  public selectedItemTemplate: TemplateRef<any>;
 
   selectedOption: SelectItem;
 
@@ -227,7 +229,7 @@ export class DropdownIS implements OnInit, AfterViewInit, AfterContentInit, Afte
           break;
 
         case 'selectedItem':
-          this.selectItemTemplate = item.template;
+          this.selectedItemTemplate = item.template;
           break;
 
         default:
