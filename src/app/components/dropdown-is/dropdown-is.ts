@@ -523,7 +523,7 @@ export class DropdownIS implements OnInit,AfterViewInit,AfterContentInit,AfterVi
     }
     
     onFilter(event): void {
-        let inputValue = event.target.value.toLowerCase();
+        let inputValue = event.target.value;//.toLowerCase();
         if(inputValue && inputValue.length) {
             this.filterValue = inputValue;
             this.activateFilter();
@@ -539,7 +539,7 @@ export class DropdownIS implements OnInit,AfterViewInit,AfterContentInit,AfterVi
     activateFilter() {
         let searchFields: string[] = this.filterBy.split(',');
         if(this.options && this.options.length) {
-            this.optionsToDisplay = this.objectUtils.filter(this.options, searchFields, this.filterValue);
+            this.optionsToDisplay = this.objectUtils.filter(this.options, searchFields, this.filterValue.toLowerCase());
             this.optionsChanged = true;
         }
     }
