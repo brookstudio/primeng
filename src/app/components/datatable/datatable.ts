@@ -565,7 +565,7 @@ export class DataTable implements AfterViewChecked,AfterViewInit,AfterContentIni
 
     @Input() scrollable: boolean;
     
-    @Input() virtualScroll: boolean;
+    @Input("dtVirtualScroll") virtualScroll: boolean;
 
     @Input() scrollHeight: any;
 
